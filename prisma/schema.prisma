@@ -1,0 +1,37 @@
+// 📂 FILE: prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite" 
+  url      = env("DATABASE_URL")
+}
+
+// Model 1: Planet (Parent)
+model Planet {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  distanceAU  Float
+  cargos      Cargo[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Model 2: Cargo (Child)
+model Cargo {
+  id          Int      @id @default(autoincrement())
+  receiptCode String   @unique
+  senderName  String
+  weight      Float
+  status      String   @default("Pending")
+  imagePath   String?
+  
+  planetId    Int
+  planet      Planet   @relation(fields: [planetId], references: [id])
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
